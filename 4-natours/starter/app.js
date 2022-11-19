@@ -24,15 +24,17 @@ app.use((req, res, next) => {
 
 app.use((req, res, next) => {
   req.requestTime = new Date().toISOString();
+  console.log(req.headers);
   next();
 });
 
 //3) ROUTES
 app.use('/api/v1/tours', tourRouter);
-app.use('/api/v1/user', userRouter);
+app.use('/api/v1/users', userRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
+  //console.log(req.headers);
 });
 
 app.use(globalErrorHandler);
