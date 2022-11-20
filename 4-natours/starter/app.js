@@ -6,7 +6,6 @@ const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 
-
 const app = express();
 
 // //Middlewares
