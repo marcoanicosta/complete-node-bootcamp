@@ -1,4 +1,4 @@
-const crypto = require('crypto')
+const crypto = require('crypto');
 const { promisify } = require('util');
 const jwt = require('jsonwebtoken');
 const User = require('../models/userModel');
@@ -21,34 +21,31 @@ const createSendToken = (user, statusCode, res) => {
     ),
     httpOnly: true,
   };
-
   if (process.env.NODE_ENV === 'production') cookiesOptions.secure = true;
+
+  res.cookie('jwt', token, cookiesOptions);
 
   //Removing user password from the output
   user.password = undefined;
-
-  res.cookie('jwt', token, cookiesOptions);
 
   res.status(statusCode).json({
     status: 'success',
     token,
     data: {
-      user: user,
+      user,
     },
   });
 };
 
 exports.signup = catchAsync(async (req, res, next) => {
-  const newUser = await User.create(
-    req.body
-    //   {
-    //   // name: req.body.name,
-    //   // email: req.body.email,
-    //   // password: req.body.password,
-    //   // passwordConfirm: req.body.passwordConfirm,
-    // }
-  );
-  createSendToken(newUser, 200, res);
+  const newUser = await User.create({
+    //req.body
+    name: req.body.name,
+    email: req.body.email,
+    password: req.body.password,
+    passwordConfirm: req.body.passwordConfirm,
+  });
+  createSendToken(newUser, 201, res);
 });
 
 exports.login = catchAsync(async (req, res, next) => {
@@ -66,7 +63,7 @@ exports.login = catchAsync(async (req, res, next) => {
     return next(new AppError('Incorrect email or password', 401));
   }
   //3) If okay, send client token to user exists
-  createSendToken(user, 201, res);
+  createSendToken(user, 200, res);
 });
 
 exports.protect = catchAsync(async (req, res, next) => {
@@ -86,28 +83,29 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
   //2) Verification token
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
-  console.log(decoded);
+  //console.log(decoded);
 
   //3) Check if user still exitss
-  const user = await User.findById(decoded.id);
-  if (!user) {
+  const currentUser = await User.findById(decoded.id);
+  if (!currentUser) {
     return next(
       new AppError('The user belonging to this token no longer exists.', 401)
     );
   }
   //4) Check fi user changed password after JWT was issued
-  if (user.changedPasswordAfter(decoded.iat)) {
+  if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
       new AppError('User recently changed password! Please log in again.', 401)
     );
   }
 
   // GRANT ACCESS TO PROTECTED ROUTE
-  req.user = user;
+  req.user = currentUser;
   next();
 });
 
 exports.restrictTo = (...roles) => {
+  console.log(roles);
   return (req, res, next) => {
     // roles ['admin', 'lead-guide']. role='user'
     if (!roles.includes(req.user.role)) {
