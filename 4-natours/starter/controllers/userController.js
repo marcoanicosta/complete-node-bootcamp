@@ -13,6 +13,11 @@ const filterObj = (obj, ...allowedFields) => {
   return newObj;
 };
 
+exports.getMe = (req, res, next) => {
+  req.params.id = req.user.id;
+  next();
+};
+
 //ROUTE HANDLERS
 exports.getAllUsers = factory.getAll(User);
 exports.getUser = factory.getOne(User);
