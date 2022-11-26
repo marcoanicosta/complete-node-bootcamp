@@ -1,5 +1,6 @@
 const { permittedCrossDomainPolicies } = require('helmet');
 const mongoose = require('mongoose');
+const Tour = require('./tourModel');
 
 const reviewSchema = new mongoose.Schema(
   {
@@ -33,6 +34,8 @@ const reviewSchema = new mongoose.Schema(
   }
 );
 
+reviewSchema.index({ tour: 1, user: 1 }, { unique: true });
+
 reviewSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'user',
@@ -40,6 +43,50 @@ reviewSchema.pre(/^find/, function (next) {
   });
   next();
 });
+
+reviewSchema.statics.calcAverageRatings = async function (tourID) {
+  const stats = await this.aggregate([
+    {
+      $match: { tour: tourID },
+    },
+    {
+      $group: {
+        _id: '$tour',
+        nRatings: { $sum: 1 },
+        avgRatings: { $avg: '$rating' },
+      },
+    },
+  ]);
+  console.log(stats);
+
+  if (stats.length > 0) {
+    await Tour.findByIdAndUpdate(tourID, {
+      ratingQuantity: stats[0].nRatings,
+      ratingsAverage: stats[0].avgRatings,
+    });
+  } else {
+    await Tour.findByIdAndUpdate(tourID, {
+      ratingQuantity: 0,
+      ratingsAverage: 4.5, //??
+    });
+  }
+};
+
+reviewSchema.post('save', function () {
+  //this points to current review
+  this.constructor.calcAverageRatings(this.tour);
+});
+
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+  this.r = await this.findOne();
+  console.log(this.r);
+  next();
+});
+
+reviewSchema.post('save', async function () {
+ await this.r.constructor.calcAverageRatings(this.r.tour);
+});
+
 const Review = mongoose.model('Review', reviewSchema);
 
 module.exports = Review;
