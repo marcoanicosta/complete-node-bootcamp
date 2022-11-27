@@ -61,12 +61,12 @@ reviewSchema.statics.calcAverageRatings = async function (tourID) {
 
   if (stats.length > 0) {
     await Tour.findByIdAndUpdate(tourID, {
-      ratingQuantity: stats[0].nRatings,
+      ratingsQuantity: stats[0].nRatings,
       ratingsAverage: stats[0].avgRatings,
     });
   } else {
     await Tour.findByIdAndUpdate(tourID, {
-      ratingQuantity: 0,
+      ratingsQuantity: 0,
       ratingsAverage: 4.5, //??
     });
   }

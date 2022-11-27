@@ -55,7 +55,7 @@ app.use(
     whitelist: [
       'duration',
       'ratingsAverage',
-      'ratingQuantity',
+      'ratingsQuantity',
       'maxGroupSize',
       'difficulty',
       'price',
