@@ -1,4 +1,4 @@
-const { permittedCrossDomainPolicies } = require('helmet');
+//const { permittedCrossDomainPolicies } = require('helmet');
 const mongoose = require('mongoose');
 const Tour = require('./tourModel');
 
