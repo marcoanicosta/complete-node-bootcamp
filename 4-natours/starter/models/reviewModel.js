@@ -1,4 +1,4 @@
-const { permittedCrossDomainPolicies } = require('helmet');
+//const { permittedCrossDomainPolicies } = require('helmet');
 const mongoose = require('mongoose');
 const Tour = require('./tourModel');
 
@@ -61,12 +61,12 @@ reviewSchema.statics.calcAverageRatings = async function (tourID) {
 
   if (stats.length > 0) {
     await Tour.findByIdAndUpdate(tourID, {
-      ratingQuantity: stats[0].nRatings,
+      ratingsQuantity: stats[0].nRatings,
       ratingsAverage: stats[0].avgRatings,
     });
   } else {
     await Tour.findByIdAndUpdate(tourID, {
-      ratingQuantity: 0,
+      ratingsQuantity: 0,
       ratingsAverage: 4.5, //??
     });
   }
@@ -84,7 +84,7 @@ reviewSchema.pre(/^findOneAnd/, async function (next) {
 });
 
 reviewSchema.post('save', async function () {
- await this.r.constructor.calcAverageRatings(this.r.tour);
+  await this.constructor.calcAverageRatings(this.tour);
 });
 
 const Review = mongoose.model('Review', reviewSchema);
