@@ -4,6 +4,7 @@ html
         block head
             meta(charset='UTF-8')
             meta(name='viewport', content='width=device-width, initial-scale=1.0')
+            
             meta(http-equiv="Content-Security-Policy" content="default-src * self blob: data: gap:; style-src * self 'unsafe-inline' blob: data: gap:; script-src * 'self' 'unsafe-eval' 'unsafe-inline' blob: data: gap:; object-src * 'self' blob: data: gap:; img-src * self 'unsafe-inline' blob: data: gap:; connect-src self * 'unsafe-inline' blob: data: gap:; frame-src * self blob: data: gap:;")
             link(rel='stylesheet' href='/css/style.css')
             link(rel='shortcut icon' type='image/png' href='/img/favicon.png')
@@ -18,5 +19,8 @@ html
     //FOOTER
     include _footer
     
-     script(src='/js/mapBox.js')
+     script(src='https://cdnjs.cloudflare.com/ajax/libs/axios/1.2.0/axios.js')
+     script(src='/js/mapbox.js')
+     script(src='/js/login.js')
+
        
