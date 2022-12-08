@@ -1,7 +1,9 @@
 <<<<<<< HEAD
  node_modules
  config.env
+ .cache/
 =======
 node_modules
 config.env
+.cache/
 >>>>>>> natours
