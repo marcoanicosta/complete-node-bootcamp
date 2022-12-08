@@ -28,13 +28,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Set Security HTTP headers
 app.use(
   helmet({
+    crossOriginResourcePolicy: 'cross-origin',
     crossOriginEmbedderPolicy: false,
-    contentSecurityPolicy: {
-      useDefaults: true,
-      directives: {
-        'script-src': ["'self'", 'https://cdnjs.cloudflare.com/'],
-      },
-    },
+    contentSecurityPolicy: false,
+    // {
+    //   useDefaults: true,
+    //   directives: { 'script-src': ["'self'", 'https://js.stripe.com/v3/'] },
+    // },
+    // contentSecurityPolicy: {
+    //   useDefaults: false,
+    //   directives: {
+    //     scriptSrcElem: ["'self'", 'https://js.stripe.com/v3/'],
+    //     //scriptSrc: [''],
+    //     objectSrc: ["'none'"],
+    //     baseUri: ["'none'"],
+    //     defaultSrc: ["'self'"],
+    //     //scriptSrc: ["'self'", '*.mapbox.com'],
+    //     upgradeInsecureRequests: [],
+    //   },
+    // },
   })
 );
 
