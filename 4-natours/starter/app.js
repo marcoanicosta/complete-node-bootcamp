@@ -13,6 +13,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
 const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
@@ -27,13 +28,25 @@ app.use(express.static(path.join(__dirname, 'public')));
 // Set Security HTTP headers
 app.use(
   helmet({
+    crossOriginResourcePolicy: 'cross-origin',
     crossOriginEmbedderPolicy: false,
-    contentSecurityPolicy: {
-      useDefaults: true,
-      directives: {
-        'script-src': ["'self'", 'https://cdnjs.cloudflare.com/'],
-      },
-    },
+    contentSecurityPolicy: false,
+    // {
+    //   useDefaults: true,
+    //   directives: { 'script-src': ["'self'", 'https://js.stripe.com/v3/'] },
+    // },
+    // contentSecurityPolicy: {
+    //   useDefaults: false,
+    //   directives: {
+    //     scriptSrcElem: ["'self'", 'https://js.stripe.com/v3/'],
+    //     //scriptSrc: [''],
+    //     objectSrc: ["'none'"],
+    //     baseUri: ["'none'"],
+    //     defaultSrc: ["'self'"],
+    //     //scriptSrc: ["'self'", '*.mapbox.com'],
+    //     upgradeInsecureRequests: [],
+    //   },
+    // },
   })
 );
 
@@ -91,6 +104,7 @@ app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookingRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Can't find ${req.originalUrl} on this server!`, 404));
